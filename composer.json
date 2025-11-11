@@ -1,0 +1,22 @@
+{
+    "name": "spindart/php-app",
+    "description": "App with PHP",
+    "authors": [
+        {
+            "name": "spindart",
+            "email": "spindart@proton.me"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Core\\": "src/Core/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.4",
+        "mockery/mockery": "^1.6"
+    },
+    "require": {
+        "ramsey/uuid": "^4.7"
+    }
+}
