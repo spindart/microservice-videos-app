@@ -11,9 +11,9 @@ class Category
 {
     use MagicMethodsTrait;
     public function __construct(
-        protected string $name,
-        protected string $description,
-        protected Uuid|string|null $id = null,
+        protected Uuid|string $id = '',
+        protected string $name = '',
+        protected string $description = '',
         protected bool $isActive = true,
         protected DateTime|string $createdAt = '',
     ) {

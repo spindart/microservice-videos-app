@@ -2,8 +2,8 @@
 
 namespace Core\Application\UseCase\Category;
 
-use Core\Application\DTO\Category\CategoryCreateInputDto;
-use Core\Application\DTO\Category\CategoryCreateOutputDto;
+use Core\Application\DTO\Input\Category\CategoryCreateInputDto;
+use Core\Application\DTO\Output\Category\CategoryCreateOutputDto;
 use Core\Domain\Entity\Category;
 use Core\Domain\Repository\CategoryRepositoryInterface;
 
@@ -21,12 +21,13 @@ class CreateCategoryUseCase
             isActive: $input->isActive,
         );
 
-        $newCategory = $this->repository->insert($category);
-        
+        $newCategory = $this->repository->insert(category: $category);
+
         return new CategoryCreateOutputDto(
             id: $newCategory->id(),
             name: $newCategory->name,
             description: $newCategory->description,
+            created_at: $newCategory->createdAt(),
             is_active: $newCategory->isActive,
         );
     }
