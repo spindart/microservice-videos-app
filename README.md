@@ -1,17 +1,54 @@
-# PHP Clean Architecture - Category Management
+Crie o Arquivo .env
+```sh
+cp .env.example .env
+```
 
-Projeto PHP seguindo os princípios de **Clean Architecture** e **Domain-Driven Design (DDD)**, implementando um sistema de gerenciamento de categorias com arquitetura em camadas bem definidas.
+
+Atualize as variáveis de ambiente do arquivo .env
+```dosini
+APP_NAME="php"
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=code_micro_videos
+DB_USERNAME=root
+DB_PASSWORD=root
+
+CACHE_DRIVER=redis
+QUEUE_CONNECTION=redis
+SESSION_DRIVER=redis
+
+REDIS_HOST=redis
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
 
 
-## ✨ Características
+Suba os containers do projeto
+```sh
+docker-compose up -d
+```
 
-- ✅ Arquitetura em camadas (Domain, Application, Infrastructure)
-- ✅ Separação de responsabilidades
-- ✅ Testes unitários com PHPUnit
-- ✅ Validação de domínio
-- ✅ Value Objects (UUID)
-- ✅ DTOs para entrada e saída
-- ✅ Interface de repositório (contrato)
-- ✅ Containerização com Docker
 
-Projeto em desenvolvimento
+Acesse o container app
+```sh
+docker-compose exec app bash
+```
+
+
+Instalar as dependências do projeto
+```sh
+composer install
+```
+
+
+Gerar a key do projeto Laravel
+```sh
+php artisan key:generate
+```
+
+
+Acesse o projeto
+[http://localhost:8000](http://localhost:8000)
