@@ -4,6 +4,7 @@ services:
 
     app:
         build: .
+        image: php-app
         container_name: microservice-videos-app
         volumes:
             - .:/var/www

@@ -1,0 +1,35 @@
+{
+    "name": "PHP Laravel Dev Container",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/var/www",
+    "shutdownAction": "stopCompose",
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "xdebug.php-debug",
+                "ms-azuretools.vscode-docker"
+            ],
+            "settings": {
+                "php.validate.executablePath": "/usr/local/bin/php"
+            }
+        }
+    },
+    
+    "forwardPorts": [8000, 3306],
+    "portsAttributes": {
+        "8000": {
+            "label": "Laravel App",
+            "onAutoForward": "notify"
+        },
+        "3306": {
+            "label": "MySQL"
+        }
+    },
+    
+    "postCreateCommand": "composer install",
+    
+    "remoteUser": "www-data"
+}
