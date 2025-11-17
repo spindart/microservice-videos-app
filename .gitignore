@@ -18,3 +18,5 @@ yarn-error.log
 /.composer
 .vscode-server
 .dotnet/
+.cursor/
+.cursor-server/
