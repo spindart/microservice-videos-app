@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\UseCase\Category;
+namespace Tests\Unit\Core\UseCase\Category;
 
 use Core\Domain\Entity\Category as EntityCategory;
 use Core\Application\DTO\Input\Category\CategoryCreateInputDto;

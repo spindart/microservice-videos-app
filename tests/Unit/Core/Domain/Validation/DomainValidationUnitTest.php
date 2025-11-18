@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Domain\Validation;
+namespace Tests\Unit\Core\Domain\Validation;
 
 use Core\Domain\Exception\EntityValidationException;
 use Core\Domain\Validation\DomainValidation;

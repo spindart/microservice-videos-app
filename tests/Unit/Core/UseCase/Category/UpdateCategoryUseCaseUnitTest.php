@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\UseCase\Category;
+namespace Tests\Unit\Core\UseCase\Category;
 
 use Core\Application\DTO\Input\Category\CategoryUpdateInputDto;
 use Core\Application\DTO\Output\Category\CategoryUpdateOutputDto;

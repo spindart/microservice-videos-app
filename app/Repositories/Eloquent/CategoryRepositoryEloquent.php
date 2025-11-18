@@ -83,12 +83,15 @@ class CategoryRepositoryEloquent implements CategoryRepositoryInterface
 
     public function toCategory(object $model): EntityCategory
     {
-        return new EntityCategory(
+        $entity = new EntityCategory(
             id: $model->id,
             name: $model->name,
             description: $model->description,
-            isActive: $model->is_active,
             createdAt: $model->created_at,
         );
+
+        ((bool) $model->is_active) ? $entity->activate() : $entity->deactivate();
+
+        return $entity;
     }
 }
