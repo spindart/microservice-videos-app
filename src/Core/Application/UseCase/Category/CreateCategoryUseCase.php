@@ -21,7 +21,7 @@ class CreateCategoryUseCase
             isActive: $input->isActive,
         );
 
-        $newCategory = $this->repository->insert(category: $category);
+        $newCategory = $this->repository->insert($category);
 
         return new CategoryCreateOutputDto(
             id: $newCategory->id(),

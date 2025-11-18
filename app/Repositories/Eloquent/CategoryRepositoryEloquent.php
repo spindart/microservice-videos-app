@@ -47,22 +47,38 @@ class CategoryRepositoryEloquent implements CategoryRepositoryInterface
 
     public function paginate(string $filter = '', string $order = 'DESC', int $page = 1, int $perPage = 10): PaginationInterface
     {
-        return new PaginatorPresenter();
+        $query = $this->model;
+        if ($filter) {
+            $query->where('name', 'like', "%{$filter}%")
+                ->orWhere('description', 'like', "%{$filter}%");
+        }
+        $query->orderBy($order, 'DESC');
+        $paginator = $query->paginate($perPage);
+        return new PaginatorPresenter($paginator);
     }
 
     public function update(EntityCategory $entity): EntityCategory
     {
         $category = $this->model->find($entity->id);
+        if (!$category) {
+            throw new EntityNotFoundException('Category not found');
+        }
         $category->update([
             'name' => $entity->name,
             'description' => $entity->description,
+            'is_active' => $entity->isActive,
         ]);
+        $category->refresh();
         return $this->toCategory($category);
     }
 
     public function delete(string $id): bool
     {
-        return $this->model->find($id)->delete();
+        $category = $this->model->find($id);
+        if (!$category) {
+            throw new EntityNotFoundException('Category not found');
+        }
+        return $category->delete();
     }
 
     public function toCategory(object $model): EntityCategory
