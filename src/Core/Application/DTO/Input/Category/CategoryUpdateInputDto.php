@@ -6,8 +6,8 @@ class CategoryUpdateInputDto
 {
     public function __construct(
         public string $id,
-        public string $name,
-        public string|null $description,
-        public bool|null $isActive = true,
+        public string|null $name = null,
+        public string|null $description = null,
+        public bool|null $isActive = null,
     ) {}
 }

@@ -31,9 +31,9 @@ class Category
     {
         $this->isActive = false;
     }
-    public function update(string $name, ?string $description = null)
+    public function update(?string $name = null, ?string $description = null)
     {
-        $this->name = $name;
+        $this->name = $name ?? $this->name;
         $this->description = $description ?? $this->description;
 
         $this->validate();
