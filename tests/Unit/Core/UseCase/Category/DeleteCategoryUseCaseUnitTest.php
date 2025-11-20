@@ -54,7 +54,7 @@ class DeleteCategoryUseCaseUnitTest extends TestCase
     {
         
         Mockery::close();
-        PARENT::tearDown();
+        parent::tearDown();
         
     }
 }

@@ -21,3 +21,5 @@ yarn-error.log
 .cursor/
 .cursor-server/
 .phpunit.cache/
+README_.md
+README__.md
