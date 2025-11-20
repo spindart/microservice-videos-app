@@ -40,7 +40,7 @@ class CategoryController extends Controller
         return CategoryResource::collection(collect($response->items))->additional([
             'meta' => [
                 'total' => $response->total,
-                'current_page' => $response->total,
+                'current_page' => $response->current_page,
                 'per_page' => $response->per_page,
                 'last_page' => $response->last_page,
                 'from' => $response->from,
@@ -57,10 +57,9 @@ class CategoryController extends Controller
         $response = $useCase->execute(input: new CategoryCreateInputDto(
             name: $request->name,
             description: $request->description ?? '',
-            isActive: (bool) $request->is_active
         ));
 
-        return (new CategoryResource(collect($response)))
+        return (new CategoryResource($response))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
@@ -68,7 +67,7 @@ class CategoryController extends Controller
     public function show(ListCategoryUseCase $useCase, string $id)
     {
         $category = $useCase->execute(new ListCategoryInputDto($id));
-        return (new CategoryResource(collect($category)))
+        return (new CategoryResource($category))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
@@ -79,10 +78,11 @@ class CategoryController extends Controller
             id: $id,
             name: $request->name,
             description: $request->description,
-            isActive: $request->has('is_active') ? (bool) $request->is_active : null
+            isActive: $request->is_active ?? true
+
         ));
 
-        return (new CategoryResource(collect($category)))
+        return (new CategoryResource($category))
             ->response();
     }
 
