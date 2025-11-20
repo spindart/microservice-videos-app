@@ -3,14 +3,14 @@
 namespace Tests\Feature\Api;
 
 use Tests\TestCase;
-use App\Models\Category as CategoryModel;
+use App\Models\Genre as GenreModel;
 use Illuminate\Http\Response;
 
-class CategoryApiTest extends TestCase
+class GenreApiTest extends TestCase
 {
-    protected $endpoint = '/api/categories';
+    protected $endpoint = '/api/genres';
 
-    public function testListEmptyCategories()
+    public function testListEmptyGenres()
     {
         $response = $this->getJson($this->endpoint);
 
@@ -18,9 +18,9 @@ class CategoryApiTest extends TestCase
         $response->assertJsonCount(0, 'data');
     }
 
-    public function testListCategories()
+    public function testListGenres()
     {
-        CategoryModel::factory()->count(30)->create();
+        GenreModel::factory()->count(30)->create();
 
         $response = $this->getJson($this->endpoint);
 
@@ -42,9 +42,9 @@ class CategoryApiTest extends TestCase
         $response->assertJsonCount(10, 'data');
     }
 
-    public function testListPaginateCategories()
+    public function testListPaginateGenres()
     {
-        CategoryModel::factory()->count(30)->create();
+        GenreModel::factory()->count(30)->create();
 
         $response = $this->getJson("$this->endpoint?page=2");
         $response->assertStatus(Response::HTTP_OK);
@@ -52,34 +52,33 @@ class CategoryApiTest extends TestCase
         $response->assertJsonCount(10, 'data');
     }
 
-    public function testListCategoryNotFound()
+    public function testListGenreNotFound()
     {
         $response = $this->getJson("$this->endpoint/fake_value");
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-    public function testListCategory()
+    public function testListGenre()
     {
-        $category = CategoryModel::factory()->create();
-        $response = $this->getJson("$this->endpoint/{$category->id}");
+        $genre = GenreModel::factory()->create();
+        $response = $this->getJson("$this->endpoint/{$genre->id}");
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'data' =>
             [
                 'id',
                 'name',
-                'description',
                 'is_active',
                 'created_at'
             ]
         ]);
-        $this->assertEquals($category->name, $response['data']['name']);
+        $this->assertEquals($genre->name, $response['data']['name']);
     }
 
-    public function testStoreCategory()
+    public function testStoreGenre()
     {
         $data = [
-            'name' => 'New Category',
+            'name' => 'New Genre',
         ];
 
         $response = $this->postJson($this->endpoint, $data);
@@ -89,7 +88,6 @@ class CategoryApiTest extends TestCase
             [
                 'id',
                 'name',
-                'description',
                 'is_active',
                 'created_at'
             ]
@@ -97,8 +95,7 @@ class CategoryApiTest extends TestCase
         $this->assertEquals($data['name'], $response['data']['name']);
 
         $data2 = [
-            'name' => 'New Category 2',
-            'description' => 'Category Description',
+            'name' => 'New Genre 2',
         ];
 
         $response = $this->postJson($this->endpoint, $data2);
@@ -108,17 +105,14 @@ class CategoryApiTest extends TestCase
             [
                 'id',
                 'name',
-                'description',
                 'is_active',
                 'created_at'
             ]
         ]);
         $this->assertEquals($data2['name'], $response['data']['name']);
-        $this->assertEquals($data2['description'], $response['data']['description']);
 
         $data3 = [
-            'name' => 'New Category 3',
-            'description' => 'Category Description',
+            'name' => 'New Genre 3',
             'is_active' => false,
         ];
 
@@ -129,21 +123,18 @@ class CategoryApiTest extends TestCase
             [
                 'id',
                 'name',
-                'description',
                 'is_active',
                 'created_at'
             ]
         ]);
         $this->assertEquals($data3['name'], $response['data']['name']);
-        $this->assertEquals($data3['description'], $response['data']['description']);
         $this->assertFalse($response['data']['is_active']);
     }
 
-    public function testStoreCategoryInvalidData()
+    public function testStoreGenreInvalidData()
     {
         $data = [
             'name' => 'Ne',
-            'description' => str_repeat('a', 300),
         ];
 
         $response = $this->postJson($this->endpoint, $data);
@@ -152,87 +143,79 @@ class CategoryApiTest extends TestCase
             'message',
             'errors' => [
                 'name',
-                'description'
             ]
         ]);
     }
 
-    public function testUpdateCategory()
+    public function testUpdateGenre()
     {
-        $category = CategoryModel::factory()->create();
+        $genre = GenreModel::factory()->create();
 
         $data = [
-            'name' => 'Updated Category',
-            'description' => 'Updated Description',
+            'name' => 'Updated Genre',
         ];
 
-        $response = $this->putJson("$this->endpoint/{$category->id}", $data);
+        $response = $this->putJson("$this->endpoint/{$genre->id}", $data);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'data' =>
             [
                 'id',
                 'name',
-                'description',
                 'is_active',
                 'created_at'
             ]
         ]);
         $this->assertEquals($data['name'], $response['data']['name']);
-        $this->assertEquals($data['description'], $response['data']['description']);
 
-        $this->assertDatabaseHas('categories', [
-            'id' => $category->id,
+        $this->assertDatabaseHas('genres', [
+            'id' => $genre->id,
             'name' => $data['name'],
-            'description' => $data['description']
         ]);
     }
 
-    public function testUpdateCategoryInvalidData()
+    public function testUpdateGenreInvalidData()
     {
-        $category = CategoryModel::factory()->create();
+        $genre = GenreModel::factory()->create();
 
         $data = [
             'name' => 'Up',
-            'description' => str_repeat('b', 300),
         ];
 
-        $response = $this->putJson("$this->endpoint/{$category->id}", $data);
+        $response = $this->putJson("$this->endpoint/{$genre->id}", $data);
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $response->assertJsonStructure([
             'message',
             'errors' => [
                 'name',
-                'description'
             ]
         ]);
     }
 
-    public function testUpdateCategoryNotFound()
+    public function testUpdateGenreNotFound()
     {
         $data = [
-            'name' => 'Updated Category',
-            'description' => 'Updated Description',
+            'name' => 'Updated Genre',
         ];
 
         $response = $this->putJson("$this->endpoint/fake_value", $data);
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-    public function testDestroyCategoryNotFound()
+    public function testDestroyGenreNotFound()
     {
         $response = $this->deleteJson("$this->endpoint/fake_value");
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-    public function testDestroyCategory()
+    public function testDestroyGenre()
     {
-        $category = CategoryModel::factory()->create();
+        $genre = GenreModel::factory()->create();
 
-        $response = $this->deleteJson("$this->endpoint/{$category->id}");
+        $response = $this->deleteJson("$this->endpoint/{$genre->id}");
         $response->assertStatus(Response::HTTP_NO_CONTENT);
-        $this->assertSoftDeleted('categories', [
-            'id' => $category->id
+        $this->assertSoftDeleted('genres', [
+            'id' => $genre->id
         ]);
     }
 }

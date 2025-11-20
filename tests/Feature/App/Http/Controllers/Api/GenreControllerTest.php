@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\App\Http\Controllers\Api;
 
-use App\Http\Requests\Category\{
-    StoreCategoryRequest, UpdateCategoryRequest};
-use App\Http\Controllers\Api\CategoryController;
-use App\Models\Category as CategoryModel;
-use App\Repositories\Eloquent\CategoryRepositoryEloquent;
-use Core\Application\UseCase\Category\CreateCategoryUseCase;
-use Core\Application\UseCase\Category\DeleteCategoryUseCase;
-use Core\Application\UseCase\Category\ListCategoriesUseCase;
-use Core\Application\UseCase\Category\ListCategoryUseCase;
-use Core\Application\UseCase\Category\UpdateCategoryUseCase;
+use App\Http\Requests\Genre\{StoreGenreRequest, UpdateGenreRequest};
+use App\Http\Controllers\Api\GenreController;
+use App\Models\Genre as GenreModel;
+use App\Repositories\Eloquent\GenreRepositoryEloquent;
+use Core\Application\UseCase\Genre\CreateGenreUseCase;
+use Core\Application\UseCase\Genre\DeleteGenreUseCase;
+use Core\Application\UseCase\Genre\ListGenresUseCase;
+use Core\Application\UseCase\Genre\ListGenreUseCase;
+use Core\Application\UseCase\Genre\UpdateGenreUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -19,24 +18,24 @@ use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Tests\TestCase;
 
-class CategoryControllerTest extends TestCase
+class GenreControllerTest extends TestCase
 {
     protected $repository;
     protected $controller;
 
     protected function setUp(): void
     {
-        $this->repository = new CategoryRepositoryEloquent(
-            new CategoryModel()
+        $this->repository = new GenreRepositoryEloquent(
+            new GenreModel()
         );
 
-        $this->controller = new CategoryController();
+        $this->controller = new GenreController();
         parent::setUp();
     }
 
     public function testIndex()
     {
-        $useCase = new ListCategoriesUseCase($this->repository);
+        $useCase = new ListGenresUseCase($this->repository);
 
         $response = $this->controller->index(new Request(), $useCase);
         $this->assertInstanceOf(AnonymousResourceCollection::class, $response);
@@ -45,14 +44,13 @@ class CategoryControllerTest extends TestCase
 
     public function testStore()
     {
-        $useCase = new CreateCategoryUseCase($this->repository);
+        $useCase = new CreateGenreUseCase($this->repository);
 
-        $request = new StoreCategoryRequest();
+        $request = new StoreGenreRequest();
         $request->headers->set('content-type', 'application/json');
 
         $request->setJson(new ParameterBag([
             'name' => 'Test',
-            'description' => 'Test Description'
         ]));
 
 
@@ -64,11 +62,11 @@ class CategoryControllerTest extends TestCase
 
     public function testShow()
     {
-        $category = CategoryModel::factory()->create();
-        $useCase = new ListCategoryUseCase($this->repository);
+        $genre = GenreModel::factory()->create();
+        $useCase = new ListGenreUseCase($this->repository);
         $response = $this->controller->show(
             useCase: $useCase,
-            id: $category->id,
+            id: $genre->id,
         );
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(Response::HTTP_OK, $response->status());
@@ -76,36 +74,34 @@ class CategoryControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $category = CategoryModel::factory()->create();
-        $useCase = new UpdateCategoryUseCase($this->repository);
+        $genre = GenreModel::factory()->create();
+        $useCase = new UpdateGenreUseCase($this->repository);
 
-        $request = new UpdateCategoryRequest();
+        $request = new UpdateGenreRequest();
         $request->headers->set('content-type', 'application/json');
 
         $request->setJson(new ParameterBag([
             'name' => 'Name Updated',
-            'description' => 'Description Updated'
         ]));
 
-        $response = $this->controller->update(request: $request, useCase: $useCase, id: $category->id);
+        $response = $this->controller->update(request: $request, useCase: $useCase, id: $genre->id);
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(Response::HTTP_OK, $response->status());
         $this->assertDatabaseHas(
-            'categories',
+            'Genres',
             [
-                'id' => $category->id,
+                'id' => $genre->id,
                 'name' => 'Name Updated',
-                'description' => 'Description Updated'
             ]
         );
     }
 
     public function testDelete()
     {
-        $category = CategoryModel::factory()->create();
-        $useCase = new DeleteCategoryUseCase($this->repository);
+        $genre = GenreModel::factory()->create();
+        $useCase = new DeleteGenreUseCase($this->repository);
 
-        $response = $this->controller->destroy(useCase: $useCase, id: $category->id);
+        $response = $this->controller->destroy(useCase: $useCase, id: $genre->id);
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
     }
