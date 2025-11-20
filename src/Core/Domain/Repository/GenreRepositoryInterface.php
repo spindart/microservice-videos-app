@@ -12,5 +12,5 @@ interface GenreRepositoryInterface
     public function paginate(string $filter = '', string $order = 'DESC', int $page = 1, int $perPage = 10): PaginationInterface;
     public function update(Genre $category): Genre;
     public function delete(string $id): bool;
-    public function toCategory(object $data): Genre;
+    public function toGenre(object $data): Genre;
 }

@@ -22,7 +22,6 @@ use Core\Application\UseCase\Category\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Ramsey\Uuid\Uuid;
 
 class CategoryController extends Controller
 {

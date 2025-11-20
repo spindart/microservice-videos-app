@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Core\UseCase\Category;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Category as CategoryModel;
 use App\Repositories\Eloquent\CategoryRepositoryEloquent;
