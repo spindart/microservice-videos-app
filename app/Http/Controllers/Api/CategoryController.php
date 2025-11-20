@@ -57,6 +57,7 @@ class CategoryController extends Controller
         $response = $useCase->execute(input: new CategoryCreateInputDto(
             name: $request->name,
             description: $request->description ?? '',
+            isActive: $request->is_active ?? true
         ));
 
         return (new CategoryResource($response))
