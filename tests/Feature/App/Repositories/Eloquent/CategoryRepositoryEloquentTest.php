@@ -92,7 +92,7 @@ class CategoryRepositoryEloquentTest extends TestCase
         $this->assertEquals(0, $response->previousPage());
     }
 
-    public function testPaginateWithout()
+    public function testPaginateEmpty()
     {
         CategoryModel::factory()->count(0)->create();
         $response = $this->repository->paginate();
@@ -153,5 +153,8 @@ class CategoryRepositoryEloquentTest extends TestCase
         $categoryDb = CategoryModel::factory()->create();
         $response = $this->repository->delete($categoryDb->id);
         $this->assertTrue($response);
+        $this->assertSoftDeleted('categories', [
+            'id' => $categoryDb->id,
+        ]);
     }
 }

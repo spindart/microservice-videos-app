@@ -17,7 +17,7 @@ class DeleteGenreUseCaseUnitTest extends TestCase
     {
         $id = (string) Uuid::uuid4()->toString();
         $mockRepository = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $mockRepository->shouldReceive('delete')->andReturn(true);
+        $mockRepository->shouldReceive('delete')->once()->andReturn(true);
         $useCase = new DeleteGenreUseCase($mockRepository);
         $deleteGenreInputDto = Mockery::mock(DeleteGenreInputDto::class, [$id]);
         $responseUseCase = $useCase->execute($deleteGenreInputDto);
@@ -28,7 +28,10 @@ class DeleteGenreUseCaseUnitTest extends TestCase
          * Spies
          */
         $spy = Mockery::spy(stdClass::class, GenreRepositoryInterface::class);
-        $spy->shouldReceive('delete')->andReturn(true);
+        $spy->shouldReceive('delete')
+            ->once()
+            ->with($id)
+            ->andReturn(true);
         $useCase = new DeleteGenreUseCase($spy);
         $deleteGenreInputDto = new DeleteGenreInputDto(id: $id);
         $responseUseCase = $useCase->execute($deleteGenreInputDto);
@@ -40,7 +43,10 @@ class DeleteGenreUseCaseUnitTest extends TestCase
     {
         $id = (string) Uuid::uuid4()->toString();
         $mockRepository = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $mockRepository->shouldReceive('delete')->andReturn(false);
+        $mockRepository->shouldReceive('delete')
+            ->once()
+            ->with($id)
+            ->andReturn(false);
         $useCase = new DeleteGenreUseCase($mockRepository);
         $deleteGenreInputDto = Mockery::mock(DeleteGenreInputDto::class, [$id]);
         $responseUseCase = $useCase->execute($deleteGenreInputDto);

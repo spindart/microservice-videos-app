@@ -3,7 +3,10 @@
 namespace Tests\Feature\Core\UseCase\Genre;
 
 use App\Models\Genre as ModelGenre;
+use App\Models\Category as CategoryModel;
+use App\Repositories\Eloquent\CategoryRepositoryEloquent;
 use App\Repositories\Eloquent\GenreRepositoryEloquent;
+use App\Repositories\Transaction\DBTransaction;
 use Core\Application\DTO\Input\Genre\GenreCreateInputDto;
 use Core\Application\UseCase\Genre\CreateGenreUseCase;
 use Tests\TestCase;
@@ -13,7 +16,13 @@ class CreateGenreUseCaseTest extends TestCase
 
     public function testExecute()
     {
-        $useCase = new CreateGenreUseCase(new GenreRepositoryEloquent(new ModelGenre()));
+        $useCase = new CreateGenreUseCase(
+            new GenreRepositoryEloquent(new ModelGenre()),
+            new CategoryRepositoryEloquent(
+                new CategoryModel()
+            ),
+            new DBTransaction()
+        );
         $response = $useCase->execute(new GenreCreateInputDto(
             name: 'Test',
             isActive: true,

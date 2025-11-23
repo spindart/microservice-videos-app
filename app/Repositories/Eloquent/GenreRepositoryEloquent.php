@@ -8,6 +8,7 @@ use Core\Domain\Entity\Genre as EntityGenre;
 use Core\Domain\Exception\EntityNotFoundException;
 use Core\Domain\Repository\GenreRepositoryInterface;
 use Core\Domain\Repository\PaginationInterface;
+use DateTime;
 
 class GenreRepositoryEloquent implements GenreRepositoryInterface
 {
@@ -22,6 +23,10 @@ class GenreRepositoryEloquent implements GenreRepositoryInterface
             'is_active' => $entity->isActive,
             'created_at' => $entity->createdAt(),
         ]);
+        if (count($entity->categoriesId) > 0) {
+            $genre->categories()->sync($entity->categoriesId);
+        }
+
         return $this->toGenre($genre);
     }
 
@@ -84,7 +89,7 @@ class GenreRepositoryEloquent implements GenreRepositoryInterface
         $entity = new EntityGenre(
             id: $model->id,
             name: $model->name,
-            createdAt: $model->created_at,
+            createdAt: new DateTime($model->created_at),
         );
 
         ((bool) $model->is_active) ? $entity->activate() : $entity->deactivate();

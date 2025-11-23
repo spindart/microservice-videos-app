@@ -8,6 +8,7 @@ use Core\Domain\Entity\Category as EntityCategory;
 use Core\Domain\Exception\EntityNotFoundException;
 use Core\Domain\Repository\CategoryRepositoryInterface;
 use Core\Domain\Repository\PaginationInterface;
+use DateTime;
 
 class CategoryRepositoryEloquent implements CategoryRepositoryInterface
 {
@@ -33,6 +34,11 @@ class CategoryRepositoryEloquent implements CategoryRepositoryInterface
             throw new EntityNotFoundException('Category not found');
         }
         return $this->toCategory($category);
+    }
+
+    public function getIdsList(array $ids = []): array
+    {
+        return $this->model->whereIn('id', $ids)->pluck('id')->toArray();
     }
 
     public function findAll(string $filter = '', string $order = 'DESC'): array
@@ -87,7 +93,7 @@ class CategoryRepositoryEloquent implements CategoryRepositoryInterface
             id: $model->id,
             name: $model->name,
             description: $model->description,
-            createdAt: $model->created_at,
+            createdAt: new DateTime($model->created_at),
         );
 
         ((bool) $model->is_active) ? $entity->activate() : $entity->deactivate();

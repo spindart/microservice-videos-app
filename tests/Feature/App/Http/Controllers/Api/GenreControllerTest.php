@@ -5,7 +5,10 @@ namespace Tests\Feature\App\Http\Controllers\Api;
 use App\Http\Requests\Genre\{StoreGenreRequest, UpdateGenreRequest};
 use App\Http\Controllers\Api\GenreController;
 use App\Models\Genre as GenreModel;
+use App\Models\Category as CategoryModel;
+use App\Repositories\Eloquent\CategoryRepositoryEloquent;
 use App\Repositories\Eloquent\GenreRepositoryEloquent;
+use App\Repositories\Transaction\DBTransaction;
 use Core\Application\UseCase\Genre\CreateGenreUseCase;
 use Core\Application\UseCase\Genre\DeleteGenreUseCase;
 use Core\Application\UseCase\Genre\ListGenresUseCase;
@@ -44,7 +47,13 @@ class GenreControllerTest extends TestCase
 
     public function testStore()
     {
-        $useCase = new CreateGenreUseCase($this->repository);
+        $useCase = new CreateGenreUseCase(
+            $this->repository,
+            new CategoryRepositoryEloquent(
+                new CategoryModel()
+            ),
+            new DBTransaction()
+        );
 
         $request = new StoreGenreRequest();
         $request->headers->set('content-type', 'application/json');
@@ -75,7 +84,14 @@ class GenreControllerTest extends TestCase
     public function testUpdate()
     {
         $genre = GenreModel::factory()->create();
-        $useCase = new UpdateGenreUseCase($this->repository);
+        $useCase = new UpdateGenreUseCase(
+            $this->repository,
+            new CategoryRepositoryEloquent(
+                new CategoryModel()
+            ),
+            new DBTransaction()
+        );
+
 
         $request = new UpdateGenreRequest();
         $request->headers->set('content-type', 'application/json');

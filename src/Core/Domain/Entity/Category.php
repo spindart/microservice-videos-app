@@ -15,11 +15,10 @@ class Category
         protected string $name = '',
         protected string $description = '',
         protected bool $isActive = true,
-        protected DateTime|string $createdAt = '',
+        protected DateTime|null $createdAt = null,
     ) {
         $this->id = $id ? new Uuid($id) : Uuid::random();
-        $this->createdAt = $createdAt ? new DateTime($createdAt) : new DateTime();
-
+        $this->createdAt = $createdAt ?? new DateTime();
         $this->validate();
     }
 

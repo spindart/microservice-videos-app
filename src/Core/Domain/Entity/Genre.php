@@ -11,14 +11,16 @@ class Genre
 {
     use MagicMethodsTrait;
 
+
     public function __construct(
         protected Uuid|string $id = '',
         protected string $name = '',
         protected bool $isActive = true,
-        protected DateTime|string $createdAt = '',
+        protected array $categoriesId = [],
+        protected DateTime|null $createdAt = null,
     ) {
         $this->id = $id ? new Uuid($id) : Uuid::random();
-        $this->createdAt = $createdAt ? new DateTime($createdAt) : new DateTime();
+        $this->createdAt = $createdAt ?? new DateTime();
 
         $this->validate();
     }
@@ -32,12 +34,25 @@ class Genre
     {
         $this->isActive = false;
     }
-    
-        public function update(?string $name = null)
+
+    public function update(string $name)
     {
-        $this->name = $name ?? $this->name;
+        $this->name = $name;
 
         $this->validate();
+    }
+
+    public function addCategory(string $categoryId): void
+    {
+        array_push($this->categoriesId, $categoryId);
+    }
+    
+    public function removeCategory(string $categoryId): void
+    {
+        $this->categoriesId = array_filter(
+            $this->categoriesId,
+            fn($id) => $id !== $categoryId
+        );
     }
 
     private function validate()

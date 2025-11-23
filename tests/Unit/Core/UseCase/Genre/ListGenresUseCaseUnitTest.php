@@ -17,13 +17,13 @@ class ListGenresUseCaseUnitTest extends TestCase
 {
     public function testListGenresEmpty()
     {
-
         $mockPagination = $this->mockPagination();
         $mockRepository = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $mockRepository->shouldReceive('paginate')->andReturn($mockPagination);
+        $mockRepository->shouldReceive('paginate')->once()->andReturn($mockPagination);
 
         $useCase = new ListGenresUseCase($mockRepository);
-        $mockInputDto = new ListGenresInputDto(filter: '', order: 'DESC', page: 1, perPage: 10);
+        $mockInputDto = Mockery::mock(ListGenresInputDto::class, ['Test',  'DESC', 1, 10]);
+        // $mockInputDto = new ListGenresInputDto(filter: '', order: 'DESC', page: 1, perPage: 10);
         $responseUseCase = $useCase->execute($mockInputDto);
         $this->assertInstanceOf(ListGenresOutputDto::class, $responseUseCase);
         $this->assertCount(0, $responseUseCase->items);
@@ -52,10 +52,11 @@ class ListGenresUseCaseUnitTest extends TestCase
 
         $mockPagination = $this->mockPagination(items: [$register]);
         $mockRepository = Mockery::mock(stdClass::class, GenreRepositoryInterface::class);
-        $mockRepository->shouldReceive('paginate')->andReturn($mockPagination);
+        $mockRepository->shouldReceive('paginate')->once()->andReturn($mockPagination);
 
         $useCase = new ListGenresUseCase($mockRepository);
-        $mockInputDto = new ListGenresInputDto(filter: '', order: 'DESC', page: 1, perPage: 10);
+        $mockInputDto = Mockery::mock(ListGenresInputDto::class, ['Test',  'DESC', 1, 10]);
+        // $mockInputDto = new ListGenresInputDto(filter: '', order: 'DESC', page: 1, perPage: 10);
         $responseUseCase = $useCase->execute($mockInputDto);
         $this->assertInstanceOf(stdClass::class, $responseUseCase->items[0]);
         $this->assertEquals('Test Genre', $responseUseCase->items[0]->name);
@@ -72,10 +73,10 @@ class ListGenresUseCaseUnitTest extends TestCase
          * Spies
          */
         $spy = Mockery::spy(stdClass::class, GenreRepositoryInterface::class);
-        $spy->shouldReceive('paginate')->andReturn($mockPagination);
+        $spy->shouldReceive('paginate')->once()->andReturn($mockPagination);
         $useCase = new ListGenresUseCase($spy);
         $responseUseCase = $useCase->execute($mockInputDto);
-        $spy->shouldHaveReceived('paginate');
+        $spy->shouldHaveReceived('paginate')->with('Test', 'DESC', 1, 10);
     }
 
     protected function mockPagination(

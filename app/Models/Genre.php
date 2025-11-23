@@ -13,7 +13,8 @@ class Genre extends Model
     protected $fillable = [
         'id',
         'name',
-        'is_active'
+        'is_active',
+        'created_at',
     ];
 
     public $incrementing = false;
@@ -23,4 +24,9 @@ class Genre extends Model
         'is_active' => 'boolean',
         'deleted_at' => 'datetime',
     ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_genre', 'genre_id', 'category_id');
+    }
 }

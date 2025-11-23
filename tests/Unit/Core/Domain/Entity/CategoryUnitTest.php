@@ -4,6 +4,7 @@ namespace Tests\Unit\Core\Domain\Entity;
 
 use Core\Domain\Entity\Category;
 use Core\Domain\Exception\EntityValidationException;
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
@@ -21,6 +22,20 @@ class CategoryUnitTest extends TestCase
         $this->assertEquals('Test Category', $category->name);
         $this->assertEquals('Test Description', $category->description);
         $this->assertTrue($category->isActive);
+    }
+
+    public function testAttriutesCreate()
+    {
+        $category = new Category(
+            name: 'Test Category',
+            description: 'Test Description'
+        );
+        $this->assertNotEmpty($category->createdAt());
+        $this->isInstanceOf(DateTime::class, $category->createdAt());
+        $this->isInstanceOf(Uuid::class, Uuid::fromString($category->id()));
+        $this->assertNotEmpty($category->id());
+        $this->assertEquals('Test Category', $category->name);
+        $this->assertEquals('Test Description', $category->description);
     }
 
     public function testActivated()
@@ -51,7 +66,7 @@ class CategoryUnitTest extends TestCase
             name: 'Test Category',
             description: 'Test Description',
             isActive: true,
-            createdAt: '2025-01-01 00:00:00'
+            createdAt: new DateTime('2025-01-01 00:00:00')
         );
 
         $category->update(
