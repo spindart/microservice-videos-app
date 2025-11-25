@@ -50,6 +50,7 @@ class GenreController extends Controller
     {
         $response = $useCase->execute(input: new GenreCreateInputDto(
             name: $request->name,
+            categoriesId: $request->categories_id ?? [],
             isActive: $request->is_active ?? true
         ));
 
@@ -71,6 +72,7 @@ class GenreController extends Controller
         $genre = $useCase->execute(new GenreUpdateInputDto(
             id: $id,
             name: $request->name,
+            categoriesId: $request->categories_id ?? [],
             isActive: $request->is_active ?? true
 
         ));

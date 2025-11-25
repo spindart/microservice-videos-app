@@ -2,4 +2,4 @@
 	email = spindart@proton.me
 	name = spindart
 [credential]
-	helper = "!f() { /var/www/.vscode-server/bin/1e3c50d64110be466c0b4a45222e81d2c9352888/node /tmp/vscode-remote-containers-f63dad5c-c83b-4cb6-b4c2-31079c3babad.js git-credential-helper $*; }; f"
+	helper = "!f() { /var/www/.vscode-server/bin/1e3c50d64110be466c0b4a45222e81d2c9352888/node /tmp/vscode-remote-containers-02cdec30-ff04-4880-aaf6-f3ac0e2fa3dd.js git-credential-helper $*; }; f"

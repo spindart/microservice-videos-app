@@ -7,6 +7,7 @@ use App\Models\Genre as GenreModel;
 use App\Repositories\Eloquent\GenreRepositoryEloquent;
 use Core\Application\DTO\Input\Genre\ListGenreInputDto;
 use Core\Application\UseCase\Genre\ListGenreUseCase;
+use Core\Domain\Exception\EntityNotFoundException;
 
 class ListGenreUseCaseTest extends TestCase
 {
@@ -25,5 +26,14 @@ class ListGenreUseCaseTest extends TestCase
             'name' => $category->name,
             'created_at' => $category->created_at,
         ]);
+    }
+
+    public function testExecuteNotFound()
+    {
+        $this->expectException(EntityNotFoundException::class);
+        $useCase = new ListGenreUseCase(new GenreRepositoryEloquent(new GenreModel()));
+        $useCase->execute(new ListGenreInputDto(
+            id: 'fake_id',
+        ));
     }
 }

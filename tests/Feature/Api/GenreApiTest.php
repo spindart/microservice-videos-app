@@ -4,21 +4,36 @@ namespace Tests\Feature\Api;
 
 use Tests\TestCase;
 use App\Models\Genre as GenreModel;
+use App\Models\Category as CategoryModel;
 use Illuminate\Http\Response;
 
 class GenreApiTest extends TestCase
 {
     protected $endpoint = '/api/genres';
 
-    public function testListEmptyGenres()
+    public function testIndexEmptyGenres()
     {
         $response = $this->getJson($this->endpoint);
 
         $response->assertStatus(200);
         $response->assertJsonCount(0, 'data');
+        $response->assertJsonStructure([
+            'meta' => [
+                'total',
+                'current_page',
+                'per_page',
+                'last_page',
+                'from',
+                'to',
+                'first_page',
+                'next_page',
+                'previous_page',
+
+            ]
+        ]);
     }
 
-    public function testListGenres()
+    public function testIndex()
     {
         GenreModel::factory()->count(30)->create();
 
@@ -40,9 +55,10 @@ class GenreApiTest extends TestCase
         ]);
         $response->assertStatus(200);
         $response->assertJsonCount(10, 'data');
+        $response->assertJsonFragment(['total' => 30]);
     }
 
-    public function testListPaginateGenres()
+    public function testIndexPaginate()
     {
         GenreModel::factory()->count(30)->create();
 
@@ -52,13 +68,13 @@ class GenreApiTest extends TestCase
         $response->assertJsonCount(10, 'data');
     }
 
-    public function testListGenreNotFound()
+    public function testShowNotFound()
     {
         $response = $this->getJson("$this->endpoint/fake_value");
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-    public function testListGenre()
+    public function testShow()
     {
         $genre = GenreModel::factory()->create();
         $response = $this->getJson("$this->endpoint/{$genre->id}");
@@ -94,8 +110,10 @@ class GenreApiTest extends TestCase
         ]);
         $this->assertEquals($data['name'], $response['data']['name']);
 
+
         $data2 = [
-            'name' => 'New Genre 2',
+            'name' => 'New Genre 3',
+            'is_active' => false,
         ];
 
         $response = $this->postJson($this->endpoint, $data2);
@@ -110,13 +128,19 @@ class GenreApiTest extends TestCase
             ]
         ]);
         $this->assertEquals($data2['name'], $response['data']['name']);
+        $this->assertFalse($response['data']['is_active']);
+    }
 
-        $data3 = [
-            'name' => 'New Genre 3',
-            'is_active' => false,
+    public function testStoreGenreWithCategories()
+    {
+        $categories = CategoryModel::factory()->count(3)->create()->pluck('id')->toArray();
+
+        $data = [
+            'name' => 'New Genre with Categories',
+            'categories_id' => $categories,
         ];
 
-        $response = $this->postJson($this->endpoint, $data3);
+        $response = $this->postJson($this->endpoint, $data);
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure([
             'data' =>
@@ -127,8 +151,34 @@ class GenreApiTest extends TestCase
                 'created_at'
             ]
         ]);
-        $this->assertEquals($data3['name'], $response['data']['name']);
-        $this->assertFalse($response['data']['is_active']);
+        $this->assertEquals($data['name'], $response['data']['name']);
+
+        foreach ($categories as $categoryId) {
+            $this->assertDatabaseHas('category_genre', [
+                'genre_id' => $response['data']['id'],
+                'category_id' => $categoryId,
+            ]);
+        }
+    }
+
+    public function testValidationStoreWithInvalidCategories()
+    {
+
+        $categories = [999, 888];
+
+        $data = [
+            'name' => 'New Genre with Categories',
+            'categories_id' => $categories,
+        ];
+
+        $response = $this->postJson($this->endpoint, $data);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonStructure([
+            'message',
+            'errors' => [
+                'categories_id',
+            ]
+        ]);
     }
 
     public function testStoreGenreInvalidData()
@@ -153,6 +203,7 @@ class GenreApiTest extends TestCase
 
         $data = [
             'name' => 'Updated Genre',
+            'categories_id' => [],
         ];
 
         $response = $this->putJson("$this->endpoint/{$genre->id}", $data);
@@ -174,7 +225,38 @@ class GenreApiTest extends TestCase
         ]);
     }
 
-    public function testUpdateGenreInvalidData()
+    public function testUpdateGenreWithCategories()
+    {
+        $genre = GenreModel::factory()->create();
+        $categories = CategoryModel::factory()->count(2)->create()->pluck('id')->toArray();
+
+        $data = [
+            'name' => 'Updated Genre with Categories',
+            'categories_id' => $categories,
+        ];
+
+        $response = $this->putJson("$this->endpoint/{$genre->id}", $data);
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure([
+            'data' =>
+            [
+                'id',
+                'name',
+                'is_active',
+                'created_at'
+            ]
+        ]);
+        $this->assertEquals($data['name'], $response['data']['name']);
+
+        foreach ($categories as $categoryId) {
+            $this->assertDatabaseHas('category_genre', [
+                'genre_id' => $genre->id,
+                'category_id' => $categoryId,
+            ]);
+        }
+    }
+
+    public function testUpdateGenreInvalidName()
     {
         $genre = GenreModel::factory()->create();
 
@@ -191,11 +273,34 @@ class GenreApiTest extends TestCase
             ]
         ]);
     }
+    public function testUpdateGenreInvalidCategories()
+    {
+        $categories = [999, 888];
+        $genre = GenreModel::factory()->create();
+
+        $data = [
+            'name' => 'Test Category',
+            'categories_id' => $categories,
+        ];
+
+        $response = $this->putJson("$this->endpoint/{$genre->id}", $data);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonStructure([
+            'message',
+            'errors' => [
+                'categories_id',
+            ]
+        ]);
+
+        $response->assertJsonFragment([0 => 'The selected categories id is invalid.']);
+    }
 
     public function testUpdateGenreNotFound()
     {
+        $categories = CategoryModel::factory()->count(2)->create()->pluck('id')->toArray();
         $data = [
             'name' => 'Updated Genre',
+            'categories_id' => $categories,
         ];
 
         $response = $this->putJson("$this->endpoint/fake_value", $data);

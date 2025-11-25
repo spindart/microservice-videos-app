@@ -26,6 +26,7 @@ class StoreGenreRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:255',
             'is_active' => 'nullable|boolean',
+            'categories_id' => 'nullable|array|exists:categories,id,deleted_at,NULL',
         ];
     }
 }
