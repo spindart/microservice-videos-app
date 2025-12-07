@@ -35,10 +35,11 @@ class CastMember
         $this->isActive = false;
     }
 
-    public function update(string $name, CastMemberType $type)
+    public function update(string $name, CastMemberType $type, bool $isActive)
     {
         $this->name = $name;
         $this->type = $type;
+        $this->isActive = $isActive;
 
         $this->validate();
     }

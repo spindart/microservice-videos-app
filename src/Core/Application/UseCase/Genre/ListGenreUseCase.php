@@ -12,12 +12,12 @@ class ListGenreUseCase
 
     public function execute(ListGenreInputDto $input): ListGenreOutputDto
     {
-        $categories = $this->repository->findById($input->id);
+        $category = $this->repository->findById($input->id);
         return new ListGenreOutputDto(
-            id: $categories->id(),
-            name: $categories->name,
-            created_at: $categories->createdAt(),
-            is_active: $categories->isActive,
+            id: $category->id(),
+            name: $category->name,
+            created_at: $category->createdAt(),
+            is_active: $category->isActive,
         );
     }
 }

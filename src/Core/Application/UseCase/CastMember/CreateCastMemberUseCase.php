@@ -27,7 +27,7 @@ class CreateCastMemberUseCase
         return new CastMemberCreateOutputDto(
             id: $newCastMember->id(),
             name: $newCastMember->name,
-            type: $newCastMember->type()->value,
+            type: $newCastMember->type(),
             is_active: $newCastMember->isActive,
             created_at: $newCastMember->createdAt(),
         );
