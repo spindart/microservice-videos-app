@@ -31,10 +31,10 @@ class AppServiceProvider extends ServiceProvider
             GenreRepositoryEloquent::class
         );
 
-        // $this->app->singleton(
-        //     CastMemberRepositoryInterface::class,
-        //     CastMemberRepositoryEloquent::class
-        // );
+        $this->app->singleton(
+            CastMemberRepositoryInterface::class,
+            CastMemberRepositoryEloquent::class
+        );
 
         /**
          * Database Transaction

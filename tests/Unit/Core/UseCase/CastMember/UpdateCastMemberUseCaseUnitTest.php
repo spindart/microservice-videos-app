@@ -25,14 +25,13 @@ class UpdateCastMemberUseCaseUnitTest extends TestCase
         $mockRepository->shouldReceive('findById')->once()->with($id)->andReturn($mockEntity);
         $mockRepository->shouldReceive('update')->once()->andReturn($mockEntity);
         $useCase = new UpdateCastMemberUseCase($mockRepository);
-        $castMemberInputDto =  Mockery::mock(CastMemberUpdateInputDto::class, [$id, 'Cast Member Updated', CastMemberType::DIRECTOR, false]);
+        $castMemberInputDto =  Mockery::mock(CastMemberUpdateInputDto::class, [$id, 'Cast Member Updated', CastMemberType::DIRECTOR]);
 
         $reponseUsecase = $useCase->execute($castMemberInputDto);
         $this->assertInstanceOf(CastMemberUpdateOutputDto::class, $reponseUsecase);
         $this->assertEquals($id, $reponseUsecase->id);
         $this->assertEquals('Cast Member Updated', $reponseUsecase->name);
         $this->assertEquals(CastMemberType::DIRECTOR, $reponseUsecase->type);
-        $this->assertFalse($reponseUsecase->is_active);
 
           /**
          * Spies
@@ -43,7 +42,7 @@ class UpdateCastMemberUseCaseUnitTest extends TestCase
 
         $spy->shouldReceive('update')->andReturn($mockEntity);
         $useCase = new UpdateCastMemberUseCase($spy);
-        $castMemberInputDto =  Mockery::mock(CastMemberUpdateInputDto::class, [$id, 'Cast Member Updated', CastMemberType::DIRECTOR, false]);
+        $castMemberInputDto =  Mockery::mock(CastMemberUpdateInputDto::class, [$id, 'Cast Member Updated', CastMemberType::DIRECTOR]);
         $responseUseCase = $useCase->execute($castMemberInputDto);
         $spy->shouldHaveReceived('findById');
         $spy->shouldHaveReceived('update');

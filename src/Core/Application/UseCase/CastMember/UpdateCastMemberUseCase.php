@@ -18,7 +18,6 @@ class UpdateCastMemberUseCase
         $castMember->update(
             name: $input->name ?? $castMember->name,
             type: $input->type ?? $castMember->type(),
-            isActive: $input->isActive ?? $castMember->isActive
         );
 
         $castMemberUpdated = $this->repository->update($castMember);
